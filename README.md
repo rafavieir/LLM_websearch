@@ -1,10 +1,8 @@
 # LLM Websearch
 
-Projeto simples de homelab para testar uma ideia:
-
 **uma IA local pode pesquisar na web antes de responder.**
 
-Usei Ollama + Qwen + Python. Quando a pergunta precisa de informacao atual, o
+Ollama + Qwen + Python. Quando a pergunta precisa de informacao atual, o
 agente faz uma busca web, monta uma ideia com base nos resultados e depois gera
 a resposta final.
 
