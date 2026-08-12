@@ -1,99 +1,101 @@
-# Local Research Agent
+# LLM Websearch
 
-A small portfolio-friendly homelab project that connects a local Ollama model
-to web search and lets the model build its own grounded idea before answering.
+Projeto simples de homelab para testar uma ideia:
 
-It is intentionally standalone and safe to publish: no production credentials,
-no private ticket data, no internal integrations.
+**uma IA local pode pesquisar na web antes de responder.**
 
-## What It Does
+Usei Ollama + Qwen + Python. Quando a pergunta precisa de informacao atual, o
+agente faz uma busca web, monta uma ideia com base nos resultados e depois gera
+a resposta final.
 
-- Runs locally against Ollama.
-- Uses `qwen3:8b` or any model available in your Ollama instance.
-- Performs web search with `ddgs` when the user asks for current information.
-- Runs a synthesis step where the model creates a grounded idea from the search.
-- Injects both the evidence and the generated idea before answering.
-- Keeps the CLI simple enough to understand and extend.
+## Como funciona
 
-## Quick Start
+```text
+pergunta do usuario
+-> busca na web
+-> cria uma ideia com base nos resultados
+-> responde usando esse contexto
+```
+
+No terminal aparecem duas partes:
+
+```text
+Agent idea >
+ideia que o modelo criou com base na pesquisa
+
+Agent >
+resposta final
+```
+
+## Tecnologias
+
+- Python
+- Ollama
+- Qwen
+- ddgs para websearch
+- dotenv para configuracao
+
+## Rodando
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 pip install -r requirements.txt
 cp .env.example .env
 python run.py
 ```
 
-If Ollama is running on a VPS, create an SSH tunnel:
+No Windows:
 
-```bash
-ssh -L 11434:127.0.0.1:11434 user@YOUR_VPS_IP
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
 python run.py
 ```
 
-## Configuration
+## Configuracao
 
-Edit `.env`:
+Edite o `.env` se precisar:
 
 ```env
 OLLAMA_BASE_URL=http://127.0.0.1:11434
 OLLAMA_MODEL=qwen3:8b
-OLLAMA_TIMEOUT=180
-OLLAMA_TEMPERATURE=0.2
-SEARCH_REGION=br-pt
-SEARCH_MAX_RESULTS=6
 ```
 
-## Commands
+Se o Ollama estiver em uma VPS, da para usar tunel SSH:
 
-Inside the chat:
+```bash
+ssh -L 11434:127.0.0.1:11434 usuario@IP_DA_VPS
+python run.py
+```
+
+## Comandos
+
+Dentro do chat:
 
 ```text
 /check
-/web latest Ollama tool calling examples
+/web novidades do Ollama
 /clear
 /exit
 ```
 
-Natural language also works:
+Tambem da para perguntar de forma normal:
 
 ```text
-Pesquise as novidades do Ollama e resuma com links.
-Busque boas praticas para agentes locais com LLM.
+pesquise boas praticas para agentes locais com LLM
 ```
 
-When web search is triggered, the CLI prints two sections:
+## Ideia
 
-```text
-Agent idea >
-...the model's own grounded idea based on the search...
+O projeto e pequeno de proposito.
 
-Agent >
-...the final answer to the user...
-```
+A intencao foi mostrar um fluxo simples de IA local com ferramenta:
 
-## Architecture
+1. pesquisar;
+2. usar contexto real;
+3. gerar uma ideia;
+4. responder melhor.
 
-```text
-run.py
-src/
-  agent.py          # search -> idea synthesis -> final answer
-  config.py         # .env settings
-  ollama_client.py  # Ollama /api/chat wrapper
-  web_search.py     # ddgs search adapter
-```
-
-## Why This Exists
-
-This repository is a small public showcase of local AI orchestration:
-
-- local-first LLM usage;
-- tool/context injection;
-- web search as evidence;
-- model-generated ideas grounded in that evidence;
-- clean separation between model, tool, and interface.
-
-It is a compact version of the same engineering pattern used in internal support
-automation: collect evidence first, synthesize an angle, then let the model
-answer over confirmed context.
+Nao e um produto final, e um experimento de homelab.
